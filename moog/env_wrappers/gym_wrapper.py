@@ -48,6 +48,8 @@ class GymWrapper(object):
 
     Observations will be a dictionary, with the same keys as the 'observers'
     dict provided when constructing a object-oriented game environment.
+    NOTE(JP): Why make observations a dictionary and not a numpy array directly?
+
     Rendering is always performed, so calling render() is a no-op.
     """
     metadata = {'render.modes': ['rgb_array']}
@@ -86,8 +88,7 @@ class GymWrapper(object):
                 obs[k] = obs[k].astype(np.float32)
             if k == 'image':
                 self._last_render = obs[k]
-
-        return obs
+        return obs["image"]
 
     def step(self, action):
         """Main step function for the environment.
