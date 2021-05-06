@@ -1,0 +1,36 @@
+// PROTOBUFFER
+//
+// If you are in the grpc directory run the following command to compile files:
+//    >>> python -m grpc_tools.protoc -I . --python_out=. --grpc_python_out=. gym.proto
+//
+//
+
+syntax = "proto3";
+
+// A Service that will provide us with an interfacable gym environment.
+service Environment {
+  rpc Reset (Empty) returns (State) {}
+  rpc Step (Action) returns (State) {}
+  rpc Sample (Empty) returns (Action) {}
+}
+
+message State {
+  Observation observation = 1;
+  float reward = 2;
+  bool done = 3;
+}
+
+message Observation {
+  repeated float data = 1;
+  repeated int32 shape = 2;
+}
+
+// Action
+message Action {
+  int32 value = 1;
+}
+
+// Test
+message Empty {
+  string message = 1;
+}
