@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 from PIL import Image
 from PIL import ImageTk
 from matplotlib.backends import backend_tkagg
+from IPython import embed
 
 from moog import env_wrappers
 from moog import observers
@@ -36,7 +37,7 @@ _WINDOW_ASPECT_RATIO = 2.7  # height/width for the gui window
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('config',
-                    'moog_demos.example_configs.pong',
+                    'moog_demos.example_configs.pacman',
                     'Filename of task config to use.')
 flags.DEFINE_integer('level', 0, 'Level of task config to run.')
 flags.DEFINE_integer('render_size', 512,
@@ -148,7 +149,7 @@ class Window(object):
         ########################################################################
 
         self.observation = env.reset()
-        image = self.observation[self._observation_image_key] # TODO: need to be changed
+        image = self.observation
         self._env_canvas = tk.Canvas(
             self.root, width=render_size, height=render_size)
         self._env_canvas.pack(side=tk.TOP)
@@ -210,7 +211,7 @@ class Window(object):
     def render(self, observation):
         """Render the environment display and reward plot."""
         # Put green border if positive reward, red border if negative reward
-        observation_image = observation[self._observation_image_key]
+        observation_image = observation
 
         if self._reward_border_width:
             # Add a red/green border to the image for positive/negative reward.
@@ -297,7 +298,7 @@ def main(_):
     )
     _env = environment.Environment(**config)
     env = gym_wrapper.GymWrapper(_env)
-    
+    # embed()
     window = Window(
         env,
         render_size=FLAGS.render_size,
@@ -308,7 +309,7 @@ def main(_):
     agent = RandomAgent(env.action_space)
     logging.info("Action space: {}".format(env.action_space))
 
-    episode_count = 10
+    episode_count = 1
     reward = 0
     done = False
 
