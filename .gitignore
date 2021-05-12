@@ -9,3 +9,6 @@
 moog_games.egg-info**
 build**
 dist/**
+
+# Images
+*.png
