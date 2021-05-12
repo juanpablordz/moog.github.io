@@ -63,6 +63,8 @@ FLAGS = flags.FLAGS
 # flags.DEFINE_string("id", "", "The id of the gym environment to simulate.")
 flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-socket", "A unique filepath where the Unix domain server will bind.")
 
+flags.DEFINE_integer("seed", 0, "Experiment's seed.")
+
 # NOTE(JP): This comer from Gym Wrapper
 flags.DEFINE_string('config',
                     'moog_demos.example_configs.pong',
@@ -100,6 +102,7 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
     def __init__(self, config):
         """This works for OpenAI type environments. MOOG is a dm_env.
         """
+        np.random.seed(FLAGS.seed)
         self.game_name = config.split(".")[-1]
         self.experiment_id = "{}_{}".format(
             self.game_name,
@@ -118,8 +121,6 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         _env = environment.Environment(**config)
         self.env = gym_wrapper.GymWrapper(_env)
 
-
-
     def Reset(self, empty_request, context):
         observation = self.env.reset()
         observation_pb = gym_pb2.Observation(data=observation.ravel(), shape=observation.shape)
@@ -135,6 +136,7 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         outpath = "imgs/{}".format(self.experiment_id)
         if not os.path.exists(outpath):
             os.makedirs(outpath)
+        # logging.info("[IMG] Image shape: {}".format(observation.shape))
         img = Image.fromarray(observation)
         now = str(int(time.time() * 1000))
         filename = '{}/{}.png'.format(outpath,now)
