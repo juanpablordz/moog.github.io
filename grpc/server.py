@@ -102,6 +102,7 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
     def __init__(self, config):
         """This works for OpenAI type environments. MOOG is a dm_env.
         """
+        self.timestep = 0
         np.random.seed(FLAGS.seed)
         self.game_name = config.split(".")[-1]
         self.experiment_id = "{}_{}".format(
@@ -127,6 +128,8 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         return gym_pb2.State(observation=observation_pb, reward=0.0, done=False)
 
     def Step(self, action_request, context):
+        self.timestep += 1
+        logging.info("[TIMESTEP] {}".format(self.timestep))
         observation, reward, done, _ = self.env.step(action_request.value)
         self.render(observation, reward)
         observation_pb = gym_pb2.Observation(data=observation.ravel(), shape=observation.shape)
