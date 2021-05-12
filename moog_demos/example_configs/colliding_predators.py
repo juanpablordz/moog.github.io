@@ -83,14 +83,14 @@ def get_config(_):
         elasticity=1., symmetric=True, update_angle_vel=True)
     agent_wall_collision = physics_lib.Collision(
         elasticity=0., symmetric=False, update_angle_vel=False)
-    
+
     forces = (
         (agent_friction_force, 'agent'),
         (symmetric_collision, 'predators', 'predators'),
         (asymmetric_collision, 'predators', 'walls'),
         (agent_wall_collision, 'agent', 'walls'),
     )
-    
+
     physics = physics_lib.Physics(*forces, updates_per_env_step=10)
 
     ############################################################################
@@ -110,8 +110,12 @@ def get_config(_):
     # Action space
     ############################################################################
 
-    action_space = action_spaces.Joystick(
-        scaling_factor=0.01, action_layers='agent')
+    action_space = action_spaces.Grid(
+        scaling_factor=0.015,
+        action_layers='agent',
+        control_velocity=True,
+        momentum=0.5,  # Value irrelevant, since maze_physics has constant speed
+    )
 
     ############################################################################
     # Observer
