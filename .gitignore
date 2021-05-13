@@ -9,3 +9,4 @@
 moog_games.egg-info**
 build**
 dist/**
+grpc/imgs/**
