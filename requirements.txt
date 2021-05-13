@@ -1,4 +1,7 @@
 https://files.pythonhosted.org/packages/f3/97/f74da84d4db8cfe95f9b6aa2469be79af1873fec1adb80405105ed99a0a8/grpcio-1.28.1-cp36-cp36m-manylinux2010_x86_64.whl
+numpy==1.19.5
+mss==6.1.0
+matplotlib==3.3.4
 grpcio-tools==1.28.1
 gym==0.18.0
 moog-games==1.3
