@@ -95,7 +95,7 @@ def get_config(_):
     # Action space
     ############################################################################
 
-    action_space = action_spaces.VerticalGrid(
+    action_space = action_spaces.HorizontalGrid(
         scaling_factor=0.015,
         action_layers='agent',
         control_velocity=True,
