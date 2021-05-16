@@ -180,7 +180,7 @@ def main(_):
     game_name = FLAGS.config.split("/")[-1]
     print(game_name)
     sockfilepath = "unix:///tmp/{}-socket".format(game_name)
-    print("sockfilepath: {}".format(sockfilepath))
+    print("[SERVER] sockfilepath: {}".format(sockfilepath))
     remove_socket_file_path(sockfilepath)
     serve(sockfilepath)
 
