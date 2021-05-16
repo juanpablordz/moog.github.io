@@ -62,6 +62,7 @@ FLAGS = flags.FLAGS
 # NOTE(JP): This come from the gym_uds
 # flags.DEFINE_string("id", "", "The id of the gym environment to simulate.")
 flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-socket", "A unique filepath where the Unix domain server will bind.")
+flags.DEFINE_int("socket_id", 0, "Socket id to be able to run multiple games in same node.")
 
 flags.DEFINE_integer("seed", 0, "Experiment's seed.")
 
@@ -179,7 +180,7 @@ def serve(sockfilepath):
 def main(_):
     game_name = FLAGS.config.split(".")[-1]
     logging.info("[SERVER] {}".format(game_name))
-    sockfilepath = "unix:///tmp/{}-socket".format(game_name)
+    sockfilepath = "unix:///tmp/{}-{}-socket".format(game_name, FLAGS.socket_id)
     logging.info("[SERVER] sockfilepath: {}".format(sockfilepath))
     remove_socket_file_path(sockfilepath)
     serve(sockfilepath)
