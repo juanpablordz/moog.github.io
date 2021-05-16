@@ -177,10 +177,10 @@ def serve(sockfilepath):
 #####################
 
 def main(_):
-    game_name = FLAGS.config.split("/")[-1]
-    print(game_name)
+    game_name = FLAGS.config.split(".")[-1]
+    logging.info("[SERVER] {}".format(game_name))
     sockfilepath = "unix:///tmp/{}-socket".format(game_name)
-    print("[SERVER] sockfilepath: {}".format(sockfilepath))
+    logging.info("[SERVER] sockfilepath: {}".format(sockfilepath))
     remove_socket_file_path(sockfilepath)
     serve(sockfilepath)
 
