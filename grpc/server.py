@@ -155,9 +155,9 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         return gym_pb2.Action(value=action)
 
 
-def remove_socket_file_path():
+def remove_socket_file_path(sockfilepath):
     try:
-        os.remove(FLAGS.sockfilepath)
+        os.remove(sockfilepath)
     except FileNotFoundError:
         pass
 
