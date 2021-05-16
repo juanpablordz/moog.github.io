@@ -62,7 +62,7 @@ FLAGS = flags.FLAGS
 # NOTE(JP): This come from the gym_uds
 # flags.DEFINE_string("id", "", "The id of the gym environment to simulate.")
 flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-socket", "A unique filepath where the Unix domain server will bind.")
-flags.DEFINE_int("socket_id", 0, "Socket id to be able to run multiple games in same node.")
+flags.DEFINE_integer("socket_id", 0, "Socket id to be able to run multiple games in same node.")
 
 flags.DEFINE_integer("seed", 0, "Experiment's seed.")
 
