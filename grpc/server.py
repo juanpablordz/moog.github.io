@@ -163,9 +163,10 @@ def remove_socket_file_path():
 
 
 def serve():
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     gym_pb2_grpc.add_EnvironmentServicer_to_server(EnvironmentServicer(FLAGS.config), server)
-    server.add_insecure_port(FLAGS.sockfilepath)
+    server.add_insecure_port(sockfilepath)
     server.start()
     server.wait_for_termination()
 
@@ -177,7 +178,11 @@ def serve():
 #####################
 
 def main(_):
-    remove_socket_file_path()
+    game_name = FLAGS.config.split("/")[-1]
+    print(game_name)
+    sockfilepath = "unix:///tmp/{}-socket".format(game_name)
+    print("sockfilepath: {}".format(sockfilepath))
+    remove_socket_file_path(sockfilepath)
     serve()
 
 
