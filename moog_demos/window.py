@@ -1,6 +1,4 @@
-"""Gym wrapper demo tasks.
-
-This is a random agent acting in the environment through gym_wrapper.
+"""Window for visualizing Game play.
 """
 
 import sys
@@ -22,7 +20,6 @@ from matplotlib import pyplot as plt
 from PIL import Image
 from PIL import ImageTk
 from matplotlib.backends import backend_tkagg
-from IPython import embed
 
 from moog import env_wrappers
 from moog import observers
@@ -35,54 +32,10 @@ from moog import action_spaces
 
 _WINDOW_ASPECT_RATIO = 2.7  # height/width for the gui window
 
-FLAGS = flags.FLAGS
-flags.DEFINE_string('config',
-                    'moog_demos.example_configs.pacman',
-                    'Filename of task config to use.')
-flags.DEFINE_integer('level', 0, 'Level of task config to run.')
-flags.DEFINE_integer('render_size', 512,
-                     'Height and width of the output image.')
-flags.DEFINE_integer('anti_aliasing', 1, 'Renderer anti-aliasing factor.')
-flags.DEFINE_integer('fps', 20,
-                     'Upper bound on frames per second. Note: this is not an '
-                     'accurate fps for the demo, since matplotlib and tkinter '
-                     'introduce additional lag.')
-flags.DEFINE_integer('reward_history', 30,
-                     'Number of historical reward timesteps to plot.')
-
-
-# Flags for gif writing
-flags.DEFINE_boolean('write_gif', False, 'Whether to write a gif.')
-flags.DEFINE_string('gif_file',
-                    '/logs/gifs/test.gif',
-                    'File path to write the gif to.')
-flags.DEFINE_integer('gif_fps', 15, 'Frames per second for the gif.')
-
-# Flags for logging timestep data
-flags.DEFINE_boolean('log_data', False, 'Whether to log timestep data.')
-
-
-class RandomAgent(object):
-    """The world's simplest agent!"""
-    def __init__(self, action_space):
-        self.action_space = action_space
-
-    def act(self, observation, reward, done):
-        return self.action_space.sample()
-
 
 
 class Window(object):
     """GUI Monitor to visualize game.
-
-    This provides a gui for human interaction with an environment. The gui
-    displays the rendered environment, a plot of rewards over recent history,
-    and a frame which may contain a joystick, depending on the action space.
-
-    Note: This agent does not abide by the standard RL agent api in that it does
-    not have a .step() method taking an observation and returning an action.
-    This is because due to Tkinter's interactive .mainloop() function, the
-    entire environment interaction must be implemented as a callback in the gui.
     """
 
     def __init__(self, env, render_size, fps=10, reward_history=20,
@@ -149,7 +102,7 @@ class Window(object):
         ########################################################################
 
         self.observation = env.reset()
-        image = self.observation
+        image = self.observation #[self._observation_image_key] # TODO: need to be changed
         self._env_canvas = tk.Canvas(
             self.root, width=render_size, height=render_size)
         self._env_canvas.pack(side=tk.TOP)
@@ -211,7 +164,7 @@ class Window(object):
     def render(self, observation):
         """Render the environment display and reward plot."""
         # Put green border if positive reward, red border if negative reward
-        observation_image = observation
+        observation_image = observation #[self._observation_image_key]
 
         if self._reward_border_width:
             # Add a red/green border to the image for positive/negative reward.
@@ -231,8 +184,9 @@ class Window(object):
                 observation_image[:, -self._reward_border_width:] = border_color
 
         # Set the image in the environment display to the new observation
-        self._env_canvas.img = ImageTk.PhotoImage(Image.fromarray(
-            observation_image))
+        self._env_canvas.img = ImageTk.PhotoImage(
+            Image.fromarray(observation_image)
+        )
         self._env_canvas.itemconfig(
             self.image_on_canvas, image=self._env_canvas.img)
 
@@ -282,64 +236,3 @@ class Window(object):
         delay = (step_end_time - step_start_time) * 0  # convert to ms
         # self.root.after(0, self.step)
         self.root.update()
-
-
-
-def main(_):
-    """Run interactive task demo."""
-    config = importlib.import_module(FLAGS.config)
-    config = config.get_config(FLAGS.level)
-
-    config['observers']['image'] = observers.PILRenderer(
-        image_size=(FLAGS.render_size, FLAGS.render_size),
-        anti_aliasing=FLAGS.anti_aliasing,
-        color_to_rgb=config['observers']['image'].color_to_rgb,
-        polygon_modifier=config['observers']['image'].polygon_modifier,
-    )
-    _env = environment.Environment(**config)
-    env = gym_wrapper.GymWrapper(_env)
-    # embed()
-    window = Window(
-        env,
-        render_size=FLAGS.render_size,
-        fps=FLAGS.fps,
-        reward_history=FLAGS.reward_history,
-        gif_writer=None,
-    )
-    agent = RandomAgent(env.action_space)
-    logging.info("Action space: {}".format(env.action_space))
-
-    episode_count = 1
-    reward = 0
-    done = False
-
-    for i in range(episode_count):
-        logging.info("Enter episode")
-        ob = env.reset()
-        count = 0
-        while True:
-            action = agent.act(ob, reward, done)
-            ob, reward, done, _ = env.step(action)
-
-            window.set_observation(ob)
-            window.set_reward(reward)
-            window.step()
-
-            logging.info("[STEP {}] Action:{} - Reward:{} - Done:{}".format(
-                count, action, reward, done
-            ))
-            env.render()
-            count += 1
-            if done:
-                break
-            # Note there's no env.render() here. But the environment still can open window and
-            # render if asked by env.monitor: it calls env.render('rgb_array') to record video.
-            # Video is not recorded every episode, see capped_cubic_video_schedule for details.
-
-    # Close the env and write monitor result info to disk
-    env.close()
-
-
-
-if __name__ == "__main__":
-    app.run(main)

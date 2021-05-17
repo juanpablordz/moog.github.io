@@ -36,7 +36,7 @@ FLAGS = flags.FLAGS
 
 # NOTE(JP): This come from the gym_uds
 # flags.DEFINE_string("id", "", "The id of the gym environment to simulate.")
-flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-uds-socket", "A unique filepath where the Unix domain server will bind.")
+flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-socket", "A unique filepath where the Unix domain server will bind.")
 
 class EnvironmentClient:
     def __init__(self, sockfilepath):

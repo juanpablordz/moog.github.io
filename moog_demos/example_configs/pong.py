@@ -15,6 +15,8 @@ paddle.
 import collections
 import numpy as np
 
+from IPython import embed
+
 from moog import action_spaces
 from moog import game_rules
 from moog import observers
@@ -37,8 +39,8 @@ def get_config(_):
     ])
     occluder = sprite.Sprite(
         x=0., y=0., shape=occluder_shape, scale=1., c0=0.6, c1=1., c2=1.)
-    
-    # Prey 
+
+    # Prey
     prey_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.8),
          distribs.Continuous('x_vel', -0.03, 0.03)],
@@ -93,9 +95,12 @@ def get_config(_):
     # Action space
     ############################################################################
 
-    action_space = action_spaces.Joystick(
-        scaling_factor=0.005, action_layers='agent', constrained_lr=True)
-
+    action_space = action_spaces.HorizontalGrid(
+        scaling_factor=0.015,
+        action_layers='agent',
+        control_velocity=True,
+        momentum=0.5,  # Value irrelevant, since maze_physics has constant speed
+    )
     ############################################################################
     # Observer
     ############################################################################

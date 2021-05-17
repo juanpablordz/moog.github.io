@@ -121,8 +121,12 @@ def _get_config(num_prey, num_predators):
     # Action space
     ############################################################################
 
-    action_space = action_spaces.Joystick(
-        scaling_factor=0.025, action_layers='agent', control_velocity=True)
+    action_space = action_spaces.Grid(
+        scaling_factor=0.015,
+        action_layers='agent',
+        control_velocity=True,
+        momentum=0.5,  # Value irrelevant, since maze_physics has constant speed
+    )
 
     ############################################################################
     # Observer

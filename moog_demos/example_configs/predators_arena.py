@@ -28,7 +28,7 @@ from moog.state_initialization import sprite_generators
 
 class StateInitialization():
     """State initialization class to dynamically adapt predator mass.
-    
+
     This is essentially an auto-curriculum: When the subject does well (evades
     the predators for a long time before being caught), the predators' masses
     are decreased, thereby increasing the predators' speeds. Conversely, when
@@ -93,7 +93,7 @@ class StateInitialization():
                 self._mass += self._mass * self._step_scaling_factor
         for s in predators:
             s.mass = self._mass
-        
+
         state = collections.OrderedDict([
             ('walls', self._walls),
             ('agent', agent),
@@ -109,7 +109,7 @@ class StateInitialization():
 
 def get_config(num_predators):
     """Get config dictionary of kwargs for environment constructor.
-    
+
     Args:
         num_predators: Int. Number of predators.
     """
@@ -137,7 +137,7 @@ def get_config(num_predators):
         elasticity=1., symmetric=False)
     inelastic_asymmetric_collision = physics_lib.Collision(
         elasticity=0., symmetric=False)
-    
+
     forces = (
         (agent_friction_force, 'agent'),
         (predator_friction_force, 'predators'),
@@ -146,7 +146,7 @@ def get_config(num_predators):
         (elastic_asymmetric_collision, 'predators', 'walls'),
         (inelastic_asymmetric_collision, 'agent', 'walls'),
     )
-    
+
     physics = physics_lib.Physics(*forces, updates_per_env_step=10)
 
     ############################################################################
@@ -160,8 +160,12 @@ def get_config(num_predators):
     # Action space
     ############################################################################
 
-    action_space = action_spaces.Joystick(
-        scaling_factor=0.01, action_layers='agent')
+    action_space = action_spaces.Grid(
+        scaling_factor=0.015,
+        action_layers='agent',
+        control_velocity=True,
+        momentum=0.5,  # Value irrelevant, since maze_physics has constant speed
+    )
 
     ############################################################################
     # Observer

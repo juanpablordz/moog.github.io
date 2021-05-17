@@ -62,6 +62,9 @@ FLAGS = flags.FLAGS
 # NOTE(JP): This come from the gym_uds
 # flags.DEFINE_string("id", "", "The id of the gym environment to simulate.")
 flags.DEFINE_string("sockfilepath", "unix:///tmp/gym-socket", "A unique filepath where the Unix domain server will bind.")
+flags.DEFINE_integer("socket_id", 0, "Socket id to be able to run multiple games in same node.")
+
+flags.DEFINE_integer("seed", 0, "Experiment's seed.")
 
 # NOTE(JP): This comer from Gym Wrapper
 flags.DEFINE_string('config',
@@ -100,6 +103,8 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
     def __init__(self, config):
         """This works for OpenAI type environments. MOOG is a dm_env.
         """
+        self.timestep = 0
+        np.random.seed(FLAGS.seed)
         self.game_name = config.split(".")[-1]
         self.experiment_id = "{}_{}".format(
             self.game_name,
@@ -118,14 +123,14 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         _env = environment.Environment(**config)
         self.env = gym_wrapper.GymWrapper(_env)
 
-
-
     def Reset(self, empty_request, context):
         observation = self.env.reset()
         observation_pb = gym_pb2.Observation(data=observation.ravel(), shape=observation.shape)
         return gym_pb2.State(observation=observation_pb, reward=0.0, done=False)
 
     def Step(self, action_request, context):
+        self.timestep += 1
+        logging.info("[TIMESTEP] {}".format(self.timestep))
         observation, reward, done, _ = self.env.step(action_request.value)
         self.render(observation, reward)
         observation_pb = gym_pb2.Observation(data=observation.ravel(), shape=observation.shape)
@@ -135,6 +140,7 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         outpath = "imgs/{}".format(self.experiment_id)
         if not os.path.exists(outpath):
             os.makedirs(outpath)
+        # logging.info("[IMG] Image shape: {}".format(observation.shape))
         img = Image.fromarray(observation)
         now = str(int(time.time() * 1000))
         filename = '{}/{}.png'.format(outpath,now)
@@ -150,17 +156,17 @@ class EnvironmentServicer(gym_pb2_grpc.EnvironmentServicer):
         return gym_pb2.Action(value=action)
 
 
-def remove_socket_file_path():
+def remove_socket_file_path(sockfilepath):
     try:
-        os.remove(FLAGS.sockfilepath)
+        os.remove(sockfilepath)
     except FileNotFoundError:
         pass
 
 
-def serve():
+def serve(sockfilepath):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     gym_pb2_grpc.add_EnvironmentServicer_to_server(EnvironmentServicer(FLAGS.config), server)
-    server.add_insecure_port(FLAGS.sockfilepath)
+    server.add_insecure_port(sockfilepath)
     server.start()
     server.wait_for_termination()
 
@@ -172,8 +178,12 @@ def serve():
 #####################
 
 def main(_):
-    remove_socket_file_path()
-    serve()
+    game_name = FLAGS.config.split(".")[-1]
+    logging.info("[SERVER] {}".format(game_name))
+    sockfilepath = "unix:///tmp/{}-{}-socket".format(game_name, FLAGS.socket_id)
+    logging.info("[SERVER] sockfilepath: {}".format(sockfilepath))
+    remove_socket_file_path(sockfilepath)
+    serve(sockfilepath)
 
 
 if __name__ == "__main__":
