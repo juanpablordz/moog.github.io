@@ -38,36 +38,88 @@ def get_config(_):
         [[-0.3, -0.3], [0.1, -0.7], [0.4, 0.6], [-0.1, 0.25]])
     shape_1 = 1.5 * np.array(
         [[-0.5, -0.3], [-0.1, -0.7], [0.7, 0.1], [0., -0.1], [-0.3, 0.25]])
-    predator_factors = distribs.Product(
-        [distribs.Continuous('x', 0.2, 0.8),
-         distribs.Continuous('y', 0.2, 0.8),
-         distribs.Discrete(
-             'shape', [shape_0, shape_1, 'star_5', 'triangle', 'spoke_5']),
-         distribs.Continuous('angle', 0., 2 * np.pi),
-         distribs.Continuous('aspect_ratio', 0.75, 1.25),
-         distribs.Continuous('scale', 0.1, 0.15),
-         distribs.Continuous('x_vel', -0.03, 0.03),
-         distribs.Continuous('y_vel', -0.03, 0.03),
-         distribs.Continuous('angle_vel', -0.05, 0.05)],
+
+    red_predator_factors = distribs.Product(
+        [
+            distribs.Continuous('x', 0.2, 0.8),
+            distribs.Continuous('y', 0.2, 0.8),
+            # distribs.Continuous('angle', 0., 2 * np.pi),
+            # distribs.Continuous('aspect_ratio', 0.75, 1.25),
+            # distribs.Continuous('scale', 0.1, 0.15),
+            distribs.Continuous('x_vel', -0.03, 0.03),
+            distribs.Continuous('y_vel', -0.03, 0.03),
+            # distribs.Continuous('angle_vel', -0.05, 0.05)
+        ],
+        shape='circle',
+        scale=0.1,
         c0=0., c1=1., c2=0.8,
     )
-
+    blue_predator_factors = distribs.Product(
+        [
+            distribs.Continuous('x', 0.2, 0.8),
+            distribs.Continuous('y', 0.2, 0.8),
+            # distribs.Continuous('angle', 0., 2 * np.pi),
+            # distribs.Continuous('aspect_ratio', 0.75, 1.25),
+            # distribs.Continuous('scale', 0.1, 0.15),
+            distribs.Continuous('x_vel', -0.03, 0.03),
+            distribs.Continuous('y_vel', -0.03, 0.03),
+            # distribs.Continuous('angle_vel', -0.05, 0.05)
+        ],
+        shape='circle',
+        scale=0.1,
+        c0=0.43, c1=.5, c2=0.66,
+    )
+    # green_predator_factors = distribs.Product(
+    #     [
+    #         distribs.Continuous('x', 0.2, 0.8),
+    #         distribs.Continuous('y', 0.2, 0.8),
+    #         # distribs.Continuous('angle', 0., 2 * np.pi),
+    #         # distribs.Continuous('aspect_ratio', 0.75, 1.25),
+    #         # distribs.Continuous('scale', 0.1, 0.15),
+    #         distribs.Continuous('x_vel', -0.03, 0.03),
+    #         distribs.Continuous('y_vel', -0.03, 0.03),
+    #         # distribs.Continuous('angle_vel', -0.05, 0.05)
+    #     ],
+    #     shape='square',
+    #     scale=0.1,
+    #     c0=0.33, c1=.5, c2=0.66,
+    # )
     # Walls
     walls = shapes.border_walls(visible_thickness=0.05, c0=0., c1=0., c2=0.5)
 
     # Create callable initializer returning entire state
     agent_generator = sprite_generators.generate_sprites(
         agent_factors, num_sprites=1)
-    predator_generator = sprite_generators.generate_sprites(
-        predator_factors, num_sprites=5)
+    red_predator_generator = sprite_generators.generate_sprites(
+        red_predator_factors, num_sprites=1
+    )
+    blue_predator_generator = sprite_generators.generate_sprites(
+        blue_predator_factors, num_sprites=1
+    )
+    # green_predator_generator = sprite_generators.generate_sprites(
+    #     green_predator_factors, num_sprites=1
+    # )
 
     def state_initializer():
-        predators = predator_generator(
-            disjoint=True, without_overlapping=walls)
-        agent = agent_generator(without_overlapping=walls + predators)
+        red_predators = red_predator_generator(
+            disjoint=True,
+            without_overlapping=walls
+        )
+        blue_predators = blue_predator_generator(
+            disjoint=True,
+            without_overlapping=walls + red_predators
+        )
+        # green_predators = red_predator_generator(
+        #     disjoint=True,
+        #     without_overlapping=walls + red_predators + blue_predators
+        # )
+        predators = red_predators + blue_predators #+ green_predators
+
+        agent = agent_generator(without_overlapping=walls + red_predators + blue_predators)
         state = collections.OrderedDict([
             ('walls', walls),
-            ('predators', predators),
+            ('red_predators', red_predators),
+            ('blue_predators', blue_predators),
             ('agent', agent),
         ])
         return state
@@ -86,8 +138,11 @@ def get_config(_):
 
     forces = (
         (agent_friction_force, 'agent'),
-        (symmetric_collision, 'predators', 'predators'),
-        (asymmetric_collision, 'predators', 'walls'),
+        (symmetric_collision, 'red_predators', 'red_predators'),
+        (asymmetric_collision, 'red_predators', 'walls'),
+        (symmetric_collision, 'blue_predators', 'blue_predators'),
+        (asymmetric_collision, 'blue_predators', 'walls'),
+        (asymmetric_collision, 'blue_predators', 'blue_predators'),
         (agent_wall_collision, 'agent', 'walls'),
     )
 
@@ -98,7 +153,9 @@ def get_config(_):
     ############################################################################
 
     predator_task = tasks.ContactReward(
-        -5, layers_0='agent', layers_1='predators')
+        -5, layers_0='agent', layers_1='red_predators')
+    predator_task = tasks.ContactReward(
+        -5, layers_0='agent', layers_1='blue_predators')
     stay_alive_task = tasks.StayAlive(
         reward_period=20,
         reward_value=0.2,
