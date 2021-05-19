@@ -38,16 +38,18 @@ def get_config(_):
     shape_1 = 1.5 * np.array(
         [[-0.5, -0.3], [-0.1, -0.7], [0.7, 0.1], [0., -0.1], [-0.3, 0.25]])
     predator_factors = distribs.Product(
-        [distribs.Continuous('x', 0.2, 0.8),
-         distribs.Continuous('y', 0.2, 0.8),
-         distribs.Discrete(
-             'shape', [shape_0, shape_1, 'star_5', 'triangle', 'spoke_5']),
-         distribs.Continuous('angle', 0., 2 * np.pi),
-         distribs.Continuous('aspect_ratio', 0.75, 1.25),
-         distribs.Continuous('scale', 0.1, 0.15),
-         distribs.Continuous('x_vel', -0.03, 0.03),
-         distribs.Continuous('y_vel', -0.03, 0.03),
-         distribs.Continuous('angle_vel', -0.05, 0.05)],
+        [
+            distribs.Continuous('x', 0.2, 0.8),
+            distribs.Continuous('y', 0.2, 0.8),
+            # distribs.Continuous('angle', 0., 2 * np.pi),
+            # distribs.Continuous('aspect_ratio', 0.75, 1.25),
+            # distribs.Continuous('scale', 0.1, 0.15),
+            distribs.Continuous('x_vel', -0.03, 0.03),
+            distribs.Continuous('y_vel', -0.03, 0.03),
+            # distribs.Continuous('angle_vel', -0.05, 0.05)
+        ],
+        shape='circle',
+        scale=0.1,
         c0=0., c1=1., c2=0.8,
     )
 
