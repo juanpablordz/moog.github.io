@@ -86,11 +86,15 @@ def _get_config(num_prey, num_predators):
         physics_lib.linear_force_fn(zero_intercept=-0.001, slope=0.0005))
     prey_avoid = physics_lib.DistanceForce(
         physics_lib.linear_force_fn(zero_intercept=0.001, slope=-0.0005))
+    symmetric_collision = physics_lib.Collision(
+        elasticity=1., symmetric=True, update_angle_vel=True)
 
     forces = (
         (agent_friction_force, 'agent'),
         (random_force, ['predators', 'prey']),
         (predator_attraction, 'agent', 'predators'),
+        (symmetric_collision, 'predators', 'predators'),
+        (symmetric_collision, 'prey', 'predators'),
         (prey_avoid, 'agent', 'prey'),
     )
 
