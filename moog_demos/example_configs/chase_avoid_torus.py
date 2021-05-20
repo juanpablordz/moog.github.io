@@ -145,10 +145,10 @@ def _get_config(num_prey, num_predators):
 
     prey_vanish = game_rules.VanishOnContact(
         vanishing_layer='prey', contacting_layer='agent')
-    def _torus_position_wrap(s):
-        s.position = np.remainder(s.position, 1)
-    torus_position_wrap = game_rules.ModifySprites(
-        ('agent', 'predators', 'prey'), _torus_position_wrap)
+    # def _torus_position_wrap(s):
+    #     s.position = np.remainder(s.position, 1)
+    # torus_position_wrap = game_rules.ModifySprites(
+    #     ('agent', 'predators', 'prey'), _torus_position_wrap)
 
     rules = (prey_vanish, torus_position_wrap)
 
