@@ -150,7 +150,7 @@ def _get_config(num_prey, num_predators):
     # torus_position_wrap = game_rules.ModifySprites(
     #     ('agent', 'predators', 'prey'), _torus_position_wrap)
 
-    rules = (prey_vanish, torus_position_wrap)
+    rules = (prey_vanish) # torus_position_wrap
 
     ############################################################################
     # Final config
