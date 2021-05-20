@@ -29,7 +29,7 @@ def get_config(_):
     agent_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.9),
          distribs.Continuous('y', 0.1, 0.9)],
-        shape='circle', scale=0.1, c0=0.33, c1=1., c2=0.66,
+        shape='square', scale=0.1, c0=0.33, c1=1., c2=0.66,
     )
 
     # Predators

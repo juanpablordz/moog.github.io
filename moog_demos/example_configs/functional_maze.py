@@ -2,7 +2,7 @@
 
 The predators (red circles) chase the agent. The agent receives reward for
 catching prey (yellow circles), which disappear upon capture. The boosters (blue
-triangles) temporarily increase the agent's speed. The portals (white squares) 
+triangles) temporarily increase the agent's speed. The portals (white squares)
 teleport the agent from one place to another.
 """
 
@@ -89,7 +89,7 @@ def get_config(_):
     agent_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.9),
          distribs.Continuous('y', 0.1, 0.9)],
-        shape='circle', scale=0.1, c0=0.33, c1=1., c2=0.7,
+        shape='square', scale=0.1, c0=0.33, c1=1., c2=0.7,
     )
 
     # Predators
@@ -178,7 +178,7 @@ def get_config(_):
     )
     asymmetric_collision = physics_lib.Collision(
         elasticity=0.25, symmetric=False, update_angle_vel=False)
-    
+
     forces = (
         (agent_friction_force, 'agent'),
         (predator_friction_force, 'predators'),
@@ -188,7 +188,7 @@ def get_config(_):
         (predator_attraction, 'agent', 'predators'),
         (asymmetric_collision, ['agent', 'predators', 'prey'], 'walls'),
     )
-    
+
     physics = physics_lib.Physics(*forces, updates_per_env_step=5)
 
     ############################################################################
