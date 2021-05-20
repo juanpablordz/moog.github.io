@@ -30,13 +30,13 @@ def get_config(_):
     ############################################################################
 
     # Occluder
-    occluder_shape = np.array([
-        [-0.1, 0.2], [1.1, 0.2], [1.1, 0.6], [-0.1, 0.6]
-    ])
-    occluder = sprite.Sprite(
-        x=0., y=0., shape=occluder_shape, scale=1., c0=0.6, c1=1., c2=1.)
-    
-    # Prey 
+    # occluder_shape = np.array([
+    #     [-0.1, 0.2], [1.1, 0.2], [1.1, 0.6], [-0.1, 0.6]
+    # ])
+    # occluder = sprite.Sprite(
+    #     x=0., y=0., shape=occluder_shape, scale=1., c0=0.6, c1=1., c2=1.)
+
+    # Prey
     prey_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.8),
          distribs.Continuous('x_vel', -0.01, 0.01)],
@@ -59,7 +59,7 @@ def get_config(_):
             ('walls', walls),
             ('prey', [sprite.Sprite(**prey_factors.sample())]),
             ('agent', [agent]),
-            ('occluder', [occluder]),
+            # ('occluder', [occluder]),
         ])
         return state
 
