@@ -69,7 +69,7 @@ class StateInitialization():
         predator_factors = distribs.Product(
             [distribs.Continuous('x', 0., 1.),
             distribs.Continuous('y', 0., 1.)],
-            shape='circle', scale=0.1, c0=0., c1=1., c2=0.8,
+            shape='square', scale=0.1, c0=0., c1=1., c2=0.8,
         )
         self._predator_generator = sprite_generators.generate_sprites(
             predator_factors, num_sprites=num_predators)
@@ -137,6 +137,8 @@ def get_config(num_predators):
         elasticity=1., symmetric=False)
     inelastic_asymmetric_collision = physics_lib.Collision(
         elasticity=0., symmetric=False)
+    symmetric_collision = physics_lib.Collision(
+        elasticity=1., symmetric=True, update_angle_vel=True)
 
     forces = (
         (agent_friction_force, 'agent'),
@@ -145,6 +147,7 @@ def get_config(num_predators):
         (predator_attraction, 'agent', 'predators'),
         (elastic_asymmetric_collision, 'predators', 'walls'),
         (inelastic_asymmetric_collision, 'agent', 'walls'),
+        (symmetric_collision, 'predators', 'predators'),
     )
 
     physics = physics_lib.Physics(*forces, updates_per_env_step=10)
