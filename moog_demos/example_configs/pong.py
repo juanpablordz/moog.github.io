@@ -74,8 +74,11 @@ def get_config(_):
     agent_friction_force = physics_lib.Drag(coeff_friction=0.25)
     asymmetric_collision = physics_lib.Collision(
         elasticity=1., symmetric=False, update_angle_vel=False)
+    inelastic_collision = physics_lib.Collision(
+        elasticity=0., symmetric=False, update_angle_vel=False)
     physics = physics_lib.Physics(
         (agent_friction_force, 'agent'),
+        (inelastic_collision, 'agent', 'walls'),
         (asymmetric_collision, 'prey', 'walls'),
         updates_per_env_step=10,
     )
