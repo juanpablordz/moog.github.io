@@ -37,7 +37,7 @@ def _get_config(num_ghosts, maze_size):
 
     def state_initializer():
         maze = maze_lib.generate_random_maze_matrix(
-            size=maze_size, ambient_size=12)
+            size=maze_size, ambient_size=8)
         maze = maze_lib.Maze(np.flip(maze, axis=0))
         walls = maze.to_sprites(c0=0., c1=0., c2=0.8)
 
