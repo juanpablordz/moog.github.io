@@ -79,7 +79,7 @@ def get_config(_):
         elasticity=0., symmetric=False, update_angle_vel=False)
     physics = physics_lib.Physics(
         (agent_friction_force, 'agent'),
-        (inelastic_collision, 'agent', 'walls'),
+        (asymmetric_collision, 'agent', 'walls'),
         (asymmetric_collision, 'prey', 'walls'),
         updates_per_env_step=10,
     )
