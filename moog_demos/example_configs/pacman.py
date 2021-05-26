@@ -26,14 +26,14 @@ def _get_config(num_ghosts, maze_size):
     ############################################################################
 
     # Agent
-    agent_factors = dict(shape='square', scale=0.05, c0=0.33, c1=1., c2=0.66)
+    agent_factors = dict(shape='hexagon', scale=0.05, c0=0.33, c1=1., c2=0.66)
 
     # Prey
-    prey_factors = dict(shape='circle', scale=0.025, c0=0.2, c1=1., c2=1.)
+    prey_factors = dict(shape='square', scale=0.015, c0=0.2, c1=1., c2=1.)
 
     # Ghosts
     ghost_factors = dict(
-        shape='circle', scale=0.05, mass=np.inf, c0=0., c1=1., c2=0.8)
+        shape='hexagon', scale=0.05, mass=np.inf, c0=0., c1=1., c2=0.8)
 
     def state_initializer():
         maze = maze_lib.generate_random_maze_matrix(
