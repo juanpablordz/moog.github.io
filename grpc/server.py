@@ -71,7 +71,7 @@ flags.DEFINE_string('config',
                     'moog_demos.example_configs.pong',
                     'Filename of task config to use.')
 flags.DEFINE_integer('level', 0, 'Level of task config to run.')
-flags.DEFINE_integer('render_size', 512,
+flags.DEFINE_integer('render_size', 160,
                      'Height and width of the output image.')
 flags.DEFINE_integer('anti_aliasing', 1, 'Renderer anti-aliasing factor.')
 flags.DEFINE_integer('fps', 20,
