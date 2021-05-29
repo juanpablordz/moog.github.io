@@ -69,7 +69,7 @@ class StateInitialization():
         predator_factors = distribs.Product(
             [distribs.Continuous('x', 0., 1.),
             distribs.Continuous('y', 0., 1.)],
-            shape='circle', scale=0.1, c0=0., c1=1., c2=0.8,
+            shape='square', scale=0.1, c0=0., c1=1., c2=0.8,
         )
         self._predator_generator = sprite_generators.generate_sprites(
             predator_factors, num_sprites=num_predators)

@@ -48,7 +48,7 @@ def get_config(_):
             distribs.Continuous('y_vel', -0.03, 0.03),
             # distribs.Continuous('angle_vel', -0.05, 0.05)
         ],
-        shape='circle',
+        shape='square',
         scale=0.1,
         c0=0., c1=1., c2=0.8,
     )

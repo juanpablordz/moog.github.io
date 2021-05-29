@@ -68,14 +68,14 @@ class Booster(game_rules.AbstractRule):
         self._steps_until_expire -= 1
         agent = state[self._agent_layer][0]
 
-        if self._steps_until_expire == np.inf:
-            boosters = state[self._booster_layer]
-            if any([agent.overlaps_sprite(s) for s in boosters]):
-                self._apply_change(agent)
-                self._steps_until_expire = self.boost_duration
-        elif self._steps_until_expire <= 0:
-            self._revert_change(agent)
-            self._steps_until_expire = np.inf
+        # if self._steps_until_expire == np.inf:
+        #     boosters = state[self._booster_layer]
+        #     if any([agent.overlaps_sprite(s) for s in boosters]):
+        #         self._apply_change(agent)
+        #         self._steps_until_expire = self.boost_duration
+        # elif self._steps_until_expire <= 0:
+        #     self._revert_change(agent)
+        #     self._steps_until_expire = np.inf
 
 
 def get_config(_):
@@ -96,14 +96,14 @@ def get_config(_):
     predator_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.9),
          distribs.Continuous('y', 0.1, 0.9)],
-        shape='circle', scale=0.1, c0=0., c1=1., c2=0.8,
+        shape='square', scale=0.1, c0=0., c1=1., c2=0.8,
     )
 
     # Prey
     prey_factors = distribs.Product(
         [distribs.Continuous('x', 0.1, 0.9),
          distribs.Continuous('y', 0.1, 0.9)],
-        shape='circle', scale=0.1, c0=0.2, c1=1., c2=1.,
+        shape='square', scale=0.1, c0=0.2, c1=1., c2=1.,
     )
 
     # Boosters
@@ -157,7 +157,7 @@ def get_config(_):
         state = collections.OrderedDict([
             ('walls', walls),
             ('portals', portals),
-            ('boosters', boosters),
+            # ('boosters', boosters),
             ('prey', prey),
             ('predators', predators),
             ('agent', agent),
